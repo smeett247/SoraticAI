@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from django.http import JsonResponse
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import permissions
@@ -32,7 +33,11 @@ schema_view = get_schema_view(
    permission_classes=(permissions.AllowAny,),
 )
 
+def api_root(request):
+    return JsonResponse({'message': 'Socratic Learning API', 'status': 'running'})
+
 urlpatterns = [
+    path('', api_root, name='api_root'),
     path('admin/', admin.site.urls),
     path('api/', include('tutor.urls')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
