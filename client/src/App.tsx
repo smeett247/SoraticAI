@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Book, MessageSquare, User, BookOpen, Atom, Calculator, Code, Send, RotateCcw, TrendingUp, Moon, Sun, Users, UserPlus, Trash2, Upload, FileText, Image, File, X, Eye, Download, ArrowLeft } from 'lucide-react';
+import { Book, MessageSquare, User, BookOpen, Atom, Calculator, Code, Send, RotateCcw, TrendingUp, Moon, Sun, Users, UserPlus, Trash2, Upload, FileText, Image, File, X, Eye, Download, ArrowLeft, Bot } from 'lucide-react';
 import LandingPage from './components/LandingPage';
 import AuthPage from './components/AuthPage';
 
@@ -231,7 +231,7 @@ function App() {
   };
 
   const mockSocraticAPI = async (userMessage: string, conversationHistory: Message[], subject: string) => {
-    const endpoint = `http://localhost:8000/api/socratic-response/`;
+    const endpoint = `${import.meta.env.VITE_API_URL}/socratic-response/`;
     
     try {
       const response = await fetch(endpoint, {
@@ -348,6 +348,10 @@ function App() {
       topicsExplored: []
     });
   };
+
+  const [students, setStudents] = useState<Student[]>([]);
+  const [newStudentName, setNewStudentName] = useState('');
+  const [newStudentEmail, setNewStudentEmail] = useState('');
 
   const addStudent = () => {
     if (!newStudentName.trim() || !newStudentEmail.trim()) return;
@@ -479,7 +483,7 @@ function App() {
     if (!token) return;
     
     try {
-      const response = await fetch('http://localhost:8000/api/profile/', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/profile/`, {
         headers: {
           'Authorization': `Token ${token}`,
         }
@@ -488,7 +492,7 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         if (data.profile_picture_url) {
-          setProfilePicture(`http://localhost:8000${data.profile_picture_url}`);
+          setProfilePicture(`${import.meta.env.VITE_API_URL.replace('/api', '')}${data.profile_picture_url}`);
         }
       } else if (response.status === 401) {
         // Token is invalid, clear auth state
@@ -512,7 +516,7 @@ function App() {
     formData.append('profile_picture', file);
 
     try {
-      const response = await fetch('http://localhost:8000/api/profile/upload/', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/profile/upload/`, {
         method: 'POST',
         headers: {
           'Authorization': `Token ${localStorage.getItem('token')}`,
@@ -523,7 +527,7 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         if (data.profile_picture_url) {
-          setProfilePicture(`http://localhost:8000${data.profile_picture_url}`);
+          setProfilePicture(`${import.meta.env.VITE_API_URL.replace('/api', '')}${data.profile_picture_url}`);
         }
       }
     } catch (error) {
@@ -636,7 +640,7 @@ function App() {
 
           {/* Content Area */}
           <div className="max-w-6xl mx-auto">
-            {activeTab === 'subjects' && (
+            {activeTab === ('subjects' as 'chat' | 'agents' | 'profile' | 'subjects') && (
               <div>
                 <h2 className={`text-2xl font-bold text-center mb-8 transition-colors duration-300 ${themeClasses.text}`}>
                   Choose Your Learning Path
@@ -672,7 +676,7 @@ function App() {
               </div>
             )}
 
-            {activeTab === 'students' && (
+            {activeTab === ('students' as 'chat' | 'agents' | 'profile' | 'students') && (
               <div>
                 <div className="flex items-center justify-between mb-8">
                   <h2 className={`text-2xl font-bold transition-colors duration-300 ${themeClasses.text}`}>
