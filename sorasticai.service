@@ -1,0 +1,14 @@
+[Unit]
+Description=SorasticAI Django App
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/SorasticAI/soratic
+Environment="PATH=/var/www/SorasticAI/venv/bin"
+ExecStart=/var/www/SorasticAI/venv/bin/gunicorn --config gunicorn.conf.py soratic.wsgi:application
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -9,8 +9,12 @@ from rest_framework.authtoken.models import Token
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from .models import Subject, Conversation, Message, UserProfile
-from .serializers import UserSerializer, SubjectSerializer, ConversationSerializer, MessageSerializer
+from datetime import timedelta
+from django.utils import timezone
+from .models import Subject, Conversation, Message, UserProfile, LearningPathway, Exercise, UserProgress, SessionSummary
+from .serializers import (UserSerializer, SubjectSerializer, ConversationSerializer, MessageSerializer,
+                         LearningPathwaySerializer, ExerciseSerializer, ExerciseWithSolutionSerializer,
+                         UserProgressSerializer, SessionSummarySerializer)
 
 load_dotenv()
 

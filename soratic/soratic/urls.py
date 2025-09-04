@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from tutor.views import serve_react
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -37,12 +38,12 @@ def api_root(request):
     return JsonResponse({'message': 'Socratic Learning API', 'status': 'running'})
 
 urlpatterns = [
-    path('', api_root, name='api_root'),
     path('admin/', admin.site.urls),
     path('api/', include('tutor.urls')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('', serve_react, name='react_app'),  # Serve React app at root
 ]
 
 if settings.DEBUG:

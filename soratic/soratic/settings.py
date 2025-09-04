@@ -66,7 +66,7 @@ ROOT_URLCONF = 'soratic.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'client' / 'dist'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,12 +85,26 @@ WSGI_APPLICATION = 'soratic.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+try:
+    import dj_database_url
+    if os.getenv('DATABASE_URL'):
+        DATABASES = {
+            'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+except ImportError:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
 
 # Password validation
@@ -130,6 +144,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# React static files
+STATICFILES_DIRS = [
+    BASE_DIR / 'client' / 'dist' / 'assets',
+]
 
 # Media files
 MEDIA_URL = '/media/'
